@@ -1,0 +1,7 @@
+pika
+python-dotenv
+Faker
+apache-beam[gcp]
+pyarrow
+pandas
+duckdb
