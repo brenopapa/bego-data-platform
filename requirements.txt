@@ -5,3 +5,4 @@ apache-beam[gcp]
 pyarrow
 pandas
 duckdb
+streamlit

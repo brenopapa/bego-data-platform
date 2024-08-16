@@ -23,6 +23,7 @@ def main(entity: str):
     channel.queue_declare(queue=f"{entity}")
 
     def callback(ch, method, properties, body):
+        print(body)
         json_object = json.loads(body.decode().replace("\'", "\""))
         print(f" [x] Received {entity} Data!")
 
@@ -44,7 +45,7 @@ def main(entity: str):
 
 
 if __name__ == "__main__":
-    entity = 'customers'
+    entity = 'purchase'
     try:
         main(entity)
     except KeyboardInterrupt:
