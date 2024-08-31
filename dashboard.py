@@ -14,7 +14,6 @@
 
 from urllib.error import URLError
 
-import altair as alt
 import pandas as pd
 
 import streamlit as st
@@ -22,18 +21,20 @@ from streamlit.hello.utils import show_code
 
 
 def data_frame_demo():
-    @st.cache_data
-    def get_UN_data():
-        AWS_BUCKET_URL = "./data/bronze/customers"
-        df = pd.read_parquet("data/bronze/customers")
+    @st.cache_data(ttl=0)
+    def get_data():
+        AWS_BUCKET_URL = "data/bronze/customer"
+        df = pd.read_parquet("data/bronze/customer")
         return df.set_index("name")
     try:
-        df = get_UN_data()
+        df = get_data()
+        print(df)
         a = df.size
         st.write(a)
+        st.bar_chart(df.iloc[0])
 
         if st.button('Refresh'):
-            df = get_UN_data()
+            df = get_data()
 
 
     except URLError as e:
@@ -45,14 +46,13 @@ def data_frame_demo():
             % e.reason
         )
 
-
 st.set_page_config(page_title="DataFrame Demo", page_icon="📊")
-st.markdown("# DataFrame Demo")
-st.sidebar.header("DataFrame Demo")
-st.write(
-    """This demo shows how to use `st.write` to visualize Pandas DataFrames.
-(Data courtesy of the [UN Data Explorer](http://data.un.org/Explorer.aspx).)"""
-)
+
+st.sidebar.header("Purchases Dashboard")
+st.sidebar.header("Customers Dashboard")
+
+st.markdown("# Purchases")
+st.write("This dashboard details purchases data.")
 
 data_frame_demo()
 
