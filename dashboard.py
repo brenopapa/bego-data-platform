@@ -19,23 +19,43 @@ import pandas as pd
 import streamlit as st
 from streamlit.hello.utils import show_code
 
-
-def data_frame_demo():
+def dashboard():
     @st.cache_data(ttl=0)
     def get_data():
-        AWS_BUCKET_URL = "data/bronze/customer"
-        df = pd.read_parquet("data/bronze/customer")
-        return df.set_index("name")
+        df = pd.read_parquet("data/bronze/purchase")
+        return df.set_index("id")
+    
+    refresh_container = st.container()
+    with refresh_container:
+        _, _, refresh_button = st.columns(3)
+        with refresh_button:
+            if st.button('Refresh Data!'):
+                df = get_data()
+
     try:
         df = get_data()
-        print(df)
         a = df.size
-        st.write(a)
-        st.bar_chart(df.iloc[0])
 
-        if st.button('Refresh'):
-            df = get_data()
+        kpi_container = st.container()
+        with kpi_container:
+            kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+            with kpi1:
+                st.metric(value=a+1, label='kpi1')
+            with kpi2:
+                st.metric(value=a+2, label='kpi2')
+            with kpi3:
+                st.metric(value=a+3, label='kpi3')
+            with kpi4:
+                st.metric(value=a+4, label='kpi4')
 
+        data_container = st.container()
+        with data_container:
+            table, plot = st.columns(2)
+            with table:
+                st.line_chart(df[['date', 'value']])
+
+            with plot:
+                st.bar_chart(df[['customer_id', 'value']])
 
     except URLError as e:
         st.error(
@@ -46,14 +66,13 @@ def data_frame_demo():
             % e.reason
         )
 
-st.set_page_config(page_title="DataFrame Demo", page_icon="📊")
+st.set_page_config(page_title="Streamlit Dashboard", page_icon="📊")
 
 st.sidebar.header("Purchases Dashboard")
 st.sidebar.header("Customers Dashboard")
 
 st.markdown("# Purchases")
-st.write("This dashboard details purchases data.")
 
-data_frame_demo()
+dashboard()
 
-show_code(data_frame_demo)
+show_code(dashboard)
